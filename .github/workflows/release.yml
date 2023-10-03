@@ -7,15 +7,15 @@ on:
       - main
       - master
     paths:
-      - '**/*.tf'
-      - '.github/workflows/release.yml'
+      - "**/*.tf"
+      - ".github/workflows/release.yml"
 
 jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
     # Skip running release workflow on forks
-    if: github.repository_owner == 'deimoscloud'
+    if: github.repository_owner == 'aayushprime'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -32,4 +32,4 @@ jobs:
             @semantic-release/git@10.0.0
             conventional-changelog-conventionalcommits@4.6.3
         env:
-          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
