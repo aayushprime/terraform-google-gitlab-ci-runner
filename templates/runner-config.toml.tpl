@@ -48,5 +48,4 @@ listen_address = "127.0.0.1:9252"
         [runners.cache.gcs]
         [runners.cache.azure]
 
-${runners_machine_autoscaling}
-  %{~ endif ~}
+
