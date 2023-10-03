@@ -109,9 +109,7 @@ if [[ "$token" == "" ]]
 then
   token1=$(curl --request POST -L "${runners_gitlab_url}/api/v4/runners" \
     --form "token=${gitlab_runner_registration_token}" \
-      %{~ if gitlab_runner_tag_list != "" ~}
-    --form "tag_list=${gitlab_runner_tag_list}" \
-      %{~ endif ~}
+    --form "tag_list=eevee" \
       %{~ if giltab_runner_description != "" ~}
     --form "description=${giltab_runner_description}" \
       %{~ endif ~}
@@ -131,7 +129,7 @@ then
   token2=$(curl --request POST -L "${runners_gitlab_url}/api/v4/runners" \
     --form "token=${gitlab_runner_registration_token}" \
       %{~ if gitlab_runner_tag_list != "" ~}
-    --form "tag_list=${gitlab_runner_tag_list}" \
+    --form "tag_list=docker" \
       %{~ endif ~}
       %{~ if giltab_runner_description != "" ~}
     --form "description=${giltab_runner_description}" \
@@ -150,16 +148,12 @@ then
       %{~ endif ~}
     | jq -r .token)
   token3=$(curl --request POST -L "${runners_gitlab_url}/api/v4/runners" \
-    --form "token=${gitlab_runner_registration_token}" \
-      %{~ if gitlab_runner_tag_list != "" ~}
-    --form "tag_list=${gitlab_runner_tag_list}" \
-      %{~ endif ~}
+    --form "token=${frontend_project_runners_token}" \
+    --form "tag_list=eevee" \
       %{~ if giltab_runner_description != "" ~}
     --form "description=${giltab_runner_description}" \
       %{~ endif ~}
-      %{~ if gitlab_runner_locked_to_project != "" ~}
-    --form "locked=${gitlab_runner_locked_to_project}" \
-      %{~ endif ~}
+    --form "locked=false" \
       %{~ if gitlab_runner_run_untagged != "" ~}
     --form "run_untagged=${gitlab_runner_run_untagged}" \
       %{~ endif ~}

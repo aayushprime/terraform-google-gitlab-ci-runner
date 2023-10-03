@@ -417,3 +417,7 @@ variable "create_docker_machines_firewall" {
   description = "Whether to create the docker-machines firewall. This is required for the runner to work. If deploying multiple runners in the same project, you can set this to false for one of the runners"
   default     = true
 }
+variable "frontend_project_runners_token" {
+  description = "Frontend project runners token, to lock a shell runner to the fronend project."
+  type        = string
+}

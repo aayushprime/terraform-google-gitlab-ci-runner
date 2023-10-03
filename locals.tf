@@ -58,6 +58,7 @@ locals {
       runners_network                       = var.network
       runners_subnetwork                    = var.subnetwork
       runners_docker_machine_image          = var.runner_machine_image
+      frontend_project_runners_token        = var.frontend_project_runners_token
   })
 
   template_shutdown_script = templatefile("${path.module}/templates/shutdown-script.sh.tpl", {
