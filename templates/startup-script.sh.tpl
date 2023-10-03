@@ -107,7 +107,49 @@ touch /etc/gitlab-runner/token
 token=$(cat /etc/gitlab-runner/token)
 if [[ "$token" == "" ]]
 then
-  token=$(curl --request POST -L "${runners_gitlab_url}/api/v4/runners" \
+  token1=$(curl --request POST -L "${runners_gitlab_url}/api/v4/runners" \
+    --form "token=${gitlab_runner_registration_token}" \
+      %{~ if gitlab_runner_tag_list != "" ~}
+    --form "tag_list=${gitlab_runner_tag_list}" \
+      %{~ endif ~}
+      %{~ if giltab_runner_description != "" ~}
+    --form "description=${giltab_runner_description}" \
+      %{~ endif ~}
+      %{~ if gitlab_runner_locked_to_project != "" ~}
+    --form "locked=${gitlab_runner_locked_to_project}" \
+      %{~ endif ~}
+      %{~ if gitlab_runner_run_untagged != "" ~}
+    --form "run_untagged=${gitlab_runner_run_untagged}" \
+      %{~ endif ~}
+      %{~ if gitlab_runner_maximum_timeout != "" ~}
+    --form "maximum_timeout=${gitlab_runner_maximum_timeout}" \
+      %{~ endif ~}
+      %{~ if gitlab_runner_access_level != "" ~}
+    --form "access_level=${gitlab_runner_access_level}" \
+      %{~ endif ~}
+    | jq -r .token)
+  token2=$(curl --request POST -L "${runners_gitlab_url}/api/v4/runners" \
+    --form "token=${gitlab_runner_registration_token}" \
+      %{~ if gitlab_runner_tag_list != "" ~}
+    --form "tag_list=${gitlab_runner_tag_list}" \
+      %{~ endif ~}
+      %{~ if giltab_runner_description != "" ~}
+    --form "description=${giltab_runner_description}" \
+      %{~ endif ~}
+      %{~ if gitlab_runner_locked_to_project != "" ~}
+    --form "locked=${gitlab_runner_locked_to_project}" \
+      %{~ endif ~}
+      %{~ if gitlab_runner_run_untagged != "" ~}
+    --form "run_untagged=${gitlab_runner_run_untagged}" \
+      %{~ endif ~}
+      %{~ if gitlab_runner_maximum_timeout != "" ~}
+    --form "maximum_timeout=${gitlab_runner_maximum_timeout}" \
+      %{~ endif ~}
+      %{~ if gitlab_runner_access_level != "" ~}
+    --form "access_level=${gitlab_runner_access_level}" \
+      %{~ endif ~}
+    | jq -r .token)
+  token3=$(curl --request POST -L "${runners_gitlab_url}/api/v4/runners" \
     --form "token=${gitlab_runner_registration_token}" \
       %{~ if gitlab_runner_tag_list != "" ~}
     --form "tag_list=${gitlab_runner_tag_list}" \
@@ -130,10 +172,14 @@ then
     | jq -r .token)
 
 # Store Token in Google Secret Manager
-echo $token > /etc/gitlab-runner/token
+echo $token1 > /etc/gitlab-runner/token1
+echo $token2 > /etc/gitlab-runner/token2
+echo $token3 > /etc/gitlab-runner/token3
 fi
 
-sed -i.bak s/__TOKEN_BE_REPLACED__/`echo $token`/g /etc/gitlab-runner/config.toml
+sed -i.bak s/__TOKEN_BE_REPLACED1__/`echo $token1`/g /etc/gitlab-runner/config.toml
+sed -i.bak s/__TOKEN_BE_REPLACED2__/`echo $token2`/g /etc/gitlab-runner/config.toml
+sed -i.bak s/__TOKEN_BE_REPLACED3__/`echo $token3`/g /etc/gitlab-runner/config.toml
 
 ${post_install}
 

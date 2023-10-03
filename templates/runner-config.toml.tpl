@@ -2,69 +2,51 @@ concurrent = ${runners_concurrent}
 check_interval = 0
 listen_address = "127.0.0.1:9252"
 
+[session_server]
+  session_timeout = 1800
+
 [[runners]]
-  name = "${runners_name}"
+  name = "gcp-shell"
   url = "${gitlab_url}"
-  token = "__TOKEN_BE_REPLACED__"
-  executor = "${runners_executor}"
-  environment = ${runners_environment_vars}
-  pre_build_script = ${runners_pre_build_script}
-  post_build_script = ${runners_post_build_script}
-  pre_clone_script = ${runners_pre_clone_script}
-  request_concurrency = ${runners_request_concurrency}
-  output_limit = ${runners_output_limit}
-  limit = ${runners_limit}
+  token = "__TOKEN_BE_REPLACED1__"
+  executor = "shell"
+  [runners.custom_build_dir]
+  [runners.cache]
+    [runners.cache.s3]
+    [runners.cache.gcs]
+    [runners.cache.azure]
+
+[[runners]]
+  name = "gcp-docker"
+  url = "${gitlab_url}"
+  token = "__TOKEN_BE_REPLACED2__"
+  executor = "docker"
+  [runners.custom_build_dir]
+  [runners.cache]
+    [runners.cache.s3]
+    [runners.cache.gcs]
+    [runners.cache.azure]
   [runners.docker]
     tls_verify = false
-    image = "${runners_image}"
-    privileged = ${runners_privileged}
-    disable_cache = ${runners_disable_cache}
-    volumes = ["/cache" ${runners_additional_volumes}]
-    shm_size = ${runners_shm_size}
-    pull_policy = "${runners_pull_policy}"
-    runtime = "${runners_docker_runtime}"
-    helper_image = "${runners_helper_image}"
-  [runners.docker.tmpfs]
-    ${runners_volumes_tmpfs}
-  [runners.docker.services_tmpfs]
-    ${runners_services_volumes_tmpfs}
-  [runners.cache]
-    Type = "gcs"
-    Shared = ${shared_cache}
-    [runners.cache.gcs]
-      CredentialsFile = "/etc/gitlab-runner/service-account.json"
-      BucketName = "${bucket_name}"
-  %{~ if runners_executor == "docker+machine" ~}
-  [runners.machine]
-    IdleCount = ${runners_idle_count}
-    IdleTime = ${runners_idle_time}
-    MaxGrowthRate = ${runners_max_growth_rate}
-    ${runners_max_builds}
-    MachineDriver = "google"
-    MachineName = "runner-%s"
-    MachineOptions = [
-      "google-project=${runners_gcp_project}" ,
-      "google-machine-type=${runners_machine_type}" ,
-      "google-network=${runners_network}" ,
-      %{~ if runners_subnetwork != "" ~}
-      "google-subnetwork=${runners_subnetwork}" ,
-      %{~ endif ~}
-      "google-zone=${runners_gcp_zone}" ,
-      "google-service-account=${runners_service_account}" ,
-      "google-scopes=https://www.googleapis.com/auth/cloud-platform" ,
-      "google-disk-type=${runners_disk_type}" ,
-      "google-disk-size=${runners_disk_size}" ,
-      "google-tags=${runners_tags}",
-      %{~ if runners_docker_machine_image != "" ~}
-      "google-machine-image=${runners_docker_machine_image}",
-      %{~ endif ~}
-      %{~ if runners_use_internal_ip ~}
-      "google-use-internal-ip-only",
-      %{~ else ~}
-      "google-use-internal-ip",
-      %{~ endif ~}
-      ${docker_machine_options}
-    ]
+    image = "python:3.6"
+    privileged = false
+    disable_entrypoint_overwrite = false
+    oom_kill_disable = false
+    disable_cache = false
+    volumes = ["/cache"]
+    shm_size = 0
+[[runners]]
+  name = "gitlab-runner-frontend"
+  limit = 1
+  request_concurrency = 1 
+  url = "${gitlab_url}"
+  token = "__TOKEN_BE_REPLACED3__"
+  executor = "shell" 
+  [runners.custom_build_dir] 
+  [runners.cache] 
+        [runners.cache.s3]
+        [runners.cache.gcs]
+        [runners.cache.azure]
 
 ${runners_machine_autoscaling}
   %{~ endif ~}
