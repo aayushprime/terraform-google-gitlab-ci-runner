@@ -110,9 +110,7 @@ then
   token1=$(curl --request POST -L "${runners_gitlab_url}/api/v4/runners" \
     --form "token=${gitlab_runner_registration_token}" \
     --form "tag_list=eevee" \
-      %{~ if giltab_runner_description != "" ~}
-    --form "description=${giltab_runner_description}" \
-      %{~ endif ~}
+    --form "description=shell-executor" \
       %{~ if gitlab_runner_locked_to_project != "" ~}
     --form "locked=${gitlab_runner_locked_to_project}" \
       %{~ endif ~}
@@ -131,9 +129,7 @@ then
       %{~ if gitlab_runner_tag_list != "" ~}
     --form "tag_list=docker" \
       %{~ endif ~}
-      %{~ if giltab_runner_description != "" ~}
-    --form "description=${giltab_runner_description}" \
-      %{~ endif ~}
+    --form "description=docker-executor" \
       %{~ if gitlab_runner_locked_to_project != "" ~}
     --form "locked=${gitlab_runner_locked_to_project}" \
       %{~ endif ~}
@@ -149,10 +145,8 @@ then
     | jq -r .token)
   token3=$(curl --request POST -L "${runners_gitlab_url}/api/v4/runners" \
     --form "token=${frontend_project_runners_token}" \
-    --form "tag_list=eevee" \
-      %{~ if giltab_runner_description != "" ~}
-    --form "description=${giltab_runner_description}" \
-      %{~ endif ~}
+    --form "tag_list=frontend" \
+    --form "description=shell-executor-but-for-frontend" \
     --form "locked=false" \
       %{~ if gitlab_runner_run_untagged != "" ~}
     --form "run_untagged=${gitlab_runner_run_untagged}" \
@@ -179,4 +173,3 @@ ${post_install}
 
 service gitlab-runner restart
 chkconfig gitlab-runner on
-
